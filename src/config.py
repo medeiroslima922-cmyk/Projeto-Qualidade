@@ -19,3 +19,9 @@ THRESHOLD_DUVIDA = 0.60     # Entre 0.60 e 0.85 é SEM CONFIANÇA. Abaixo é ERR
 
 # Configurações da Câmera
 CAMERA_ID = 0  # 0 para webcam integrada, 1 para USB externa
+
+# Coordenadas das Zonas de Inspeção (X, Y, Largura, Altura)
+# Ajuste estes valores conforme a posição do medidor na câmera
+ZONA_SERIAL = (220, 280, 200, 60)   
+ZONA_LOGO = (60, 480, 320, 90)     
+ZONA_TERMINAIS = (550, 560, 250, 40)

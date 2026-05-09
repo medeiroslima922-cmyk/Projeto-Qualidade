@@ -29,11 +29,20 @@ class VisionSystem:
         roi = (x, y, w, h)
         """
         try:
+            h_max, w_max = frame.shape[:2]
             if roi:
                 x, y, w, h = roi
+                # Ajustar coordenadas para não sair da tela
+                x = max(0, min(x, w_max - 1))
+                y = max(0, min(y, h_max - 1))
+                w = min(w, w_max - x)
+                h = min(h, h_max - y)
+                
                 img_crop = frame[y:y+h, x:x+w]
             else:
                 img_crop = frame
+
+            if img_crop.size == 0: return ""
 
             gray = cv2.cvtColor(img_crop, cv2.COLOR_BGR2GRAY)
             # Aplicar um threshold para melhorar o OCR
@@ -54,7 +63,16 @@ class VisionSystem:
         ref_img = cv2.imread(caminho_referencia, cv2.IMREAD_GRAYSCALE)
         
         if roi:
+            h_max, w_max = img_capturada.shape[:2]
             x, y, w, h = roi
+            # Ajustar coordenadas para não sair da tela
+            x = max(0, min(x, w_max - 1))
+            y = max(0, min(y, h_max - 1))
+            w = min(w, w_max - x)
+            h = min(h, h_max - y)
+
+            if w <= 0 or h <= 0: return "ERRO_ROI", 0, (0,0)
+
             cap_roi = img_capturada[y:y+h, x:x+w]
             cap_gray = cv2.cvtColor(cap_roi, cv2.COLOR_BGR2GRAY)
             # Ajustar tamanho da referência para o ROI se necessário
