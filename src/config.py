@@ -22,6 +22,10 @@ CAMERA_ID = 0  # 0 para webcam integrada, 1 para USB externa
 
 # Coordenadas das Zonas de Inspeção (X, Y, Largura, Altura)
 # Ajuste estes valores conforme a posição do medidor na câmera
-ZONA_SERIAL = (220, 280, 200, 60)   
-ZONA_LOGO = (60, 480, 320, 90)     
-ZONA_TERMINAIS = (550, 560, 250, 40)
+ZONA_INMETRO = (250, 180, 120, 80)    # Ponto 2 (Logo INMETRO)
+ZONA_ELETRA = (250, 300, 120, 80)     # Ponto 3 (Logo Eletra)
+ZONA_SERIAL = (180, 480, 250, 40)     # Ponto 4 (Número de Série)
+ZONA_ID = (180, 520, 250, 40)         # Ponto 5 (ID do Medidor)
+ZONA_BARCODE = (300, 580, 300, 100)   # Ponto 5 (Código de Barras)
+ZONA_ENERGISA = (50, 600, 150, 80)    # Ponto 6 (Logo Energisa)
+ZONA_TERMINAIS = (550, 560, 250, 40)  # Outros modelos
