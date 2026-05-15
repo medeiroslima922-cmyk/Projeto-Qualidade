@@ -12,10 +12,16 @@ def rodar_esteira_automatica():
         print("Erro ao abrir a câmera.")
         return
 
-    print("\n" + "="*50)
-    print("   SISTEMA DE ESTEIRA AUTOMÁTICA ATIVO")
-    print("   Aguardando detecção de medidor...")
     print("="*50)
+    
+    # Pegar resolução real
+    frame_teste = vision.capture_frame()
+    if frame_teste is not None:
+        h, w = frame_teste.shape[:2]
+        print(f"   Resolução Detectada: {w}x{h}")
+    else:
+        print("   Erro ao capturar frame de teste.")
+
 
     ultimo_frame_cinza = None
     tempo_estabilizado = 0
@@ -162,6 +168,9 @@ def rodar_esteira_automatica():
             for nome, zona in zonas_para_salvar.items():
                 x, y, w, h = zona
                 recorte = frame[y:y+h, x:x+w]
+                if recorte.size == 0:
+                    print(f"ERRO: Zona {nome} está fora dos limites da imagem ({frame.shape[1]}x{frame.shape[0]})")
+                    continue
                 caminho = os.path.join(REF_DIR, nome)
                 cv2.imwrite(caminho, recorte)
                 print(f"Salvo: {caminho}")
@@ -172,3 +181,4 @@ def rodar_esteira_automatica():
 
 if __name__ == "__main__":
     rodar_esteira_automatica()
+
