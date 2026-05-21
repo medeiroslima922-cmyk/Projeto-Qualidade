@@ -1,7 +1,7 @@
 import cv2
 from src.vision import VisionSystem
 from src.database import DatabaseManager
-from src.config import ZONA_SERIAL, ZONA_LOGO, ZONA_TERMINAIS
+from src.config import ZONA_SERIAL, ZONA_LOGO
 import os
 
 def simular_api_fabrica(serial):
@@ -11,8 +11,7 @@ def simular_api_fabrica(serial):
     dados_producao = {
         "12181247": {
             "cliente": "AMAZONAS ENERGIA",
-            "logo_ref": "referencias/logo_amazonas.png",
-            "terminais_ref": "referencias/terminais_padrao.png"
+            "logo_ref": "referencias/logo_amazonas.png"
         }
     }
     return dados_producao.get(serial)
@@ -36,46 +35,10 @@ def rodar_inspecao():
         # DEFINIÇÃO DAS ZONAS (Puxando do config.py)
         roi_serial = ZONA_SERIAL
         roi_logo_cliente = ZONA_LOGO
-        roi_terminais = ZONA_TERMINAIS
 
         # Desenhar as zonas ajustadas
         cv2.rectangle(display_frame, (roi_serial[0], roi_serial[1]), (roi_serial[0]+roi_serial[2], roi_serial[1]+roi_serial[3]), (255, 0, 0), 2)
         cv2.rectangle(display_frame, (roi_logo_cliente[0], roi_logo_cliente[1]), (roi_logo_cliente[0]+roi_logo_cliente[2], roi_logo_cliente[1]+roi_logo_cliente[3]), (0, 255, 255), 2)
-        cv2.rectangle(display_frame, (roi_terminais[0], roi_terminais[1]), (roi_terminais[0]+roi_terminais[2], roi_terminais[1]+roi_terminais[3]), (0, 0, 255), 2)
-
-def simular_api_fabrica(serial):
-    # ... (mesmo código anterior)
-    dados_producao = {
-        "12181247": {
-            "cliente": "AMAZONAS ENERGIA",
-            "logo_ref": "referencias/logo_amazonas.png",
-            "terminais_ref": "referencias/terminais_padrao.png"
-        }
-    }
-    return dados_producao.get(serial)
-
-def rodar_inspecao():
-    vision = VisionSystem()
-    db = DatabaseManager()
-    
-    print("Iniciando câmera...")
-    if not vision.open_camera(0): return
-
-    while True:
-        frame = vision.capture_frame()
-        if frame is None: break
-        
-        display_frame = frame.copy()
-
-        # DEFINIÇÃO DAS ZONAS DE INSPEÇÃO (Lendo do config.py)
-        roi_serial = ZONA_SERIAL
-        roi_logo_cliente = ZONA_LOGO
-        roi_terminais = ZONA_TERMINAIS
-
-        # Desenhar as zonas menores e mais precisas
-        cv2.rectangle(display_frame, (roi_serial[0], roi_serial[1]), (roi_serial[0]+roi_serial[2], roi_serial[1]+roi_serial[3]), (255, 0, 0), 2)
-        cv2.rectangle(display_frame, (roi_logo_cliente[0], roi_logo_cliente[1]), (roi_logo_cliente[0]+roi_logo_cliente[2], roi_logo_cliente[1]+roi_logo_cliente[3]), (0, 255, 255), 2)
-        cv2.rectangle(display_frame, (roi_terminais[0], roi_terminais[1]), (roi_terminais[0]+roi_terminais[2], roi_terminais[1]+roi_terminais[3]), (0, 0, 255), 2)
 
         cv2.imshow('Inspecao de Qualidade Industrial', display_frame)
         
@@ -101,17 +64,9 @@ def rodar_inspecao():
                 else:
                     print(f"AVISO: Gabarito '{info['logo_ref']}' não encontrado.")
                     status_logo = "N/A"
-
-                # 4. CONFERIR TERMINAIS
-                if os.path.exists(info['terminais_ref']):
-                    status_term, score_term, _ = vision.compare_images(frame, info['terminais_ref'], roi=roi_terminais)
-                    print(f"STATUS TERMINAIS: {status_term} (Score: {score_term:.2f})")
-                else:
-                    print(f"AVISO: Gabarito '{info['terminais_ref']}' não encontrado.")
-                    status_term = "N/A"
                 
-                # SALVAR RESULTADO
-                res_final = "APROVADO" if status_logo == "CORRETO" and status_term == "CORRETO" else "REPROVADO"
+                # SALVAR RESULTADO (Apenas baseado nos desenhos/logos corretos)
+                res_final = "APROVADO" if status_logo == "CORRETO" else "REPROVADO"
                 print(f"RESULTADO FINAL: {res_final}")
                 db.salvar_inspecao(serial, res_final, 1.0, "capturas/ultima.jpg")
             else:

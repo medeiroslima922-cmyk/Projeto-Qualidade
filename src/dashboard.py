@@ -82,6 +82,9 @@ class InspectionApp:
         self.lbl_status = tk.Label(ctrl_frame, text="MONITORANDO", font=("Arial", 20, "bold"), bg="#2c3e50", fg="#f1c40f")
         self.lbl_status.pack(pady=10)
 
+        self.lbl_score = tk.Label(ctrl_frame, text="Score: ---", font=("Arial", 12), bg="#2c3e50", fg="white")
+        self.lbl_score.pack(pady=5)
+
     def update_webcam(self):
         frame = self.vision.capture_frame()
         if frame is not None:
