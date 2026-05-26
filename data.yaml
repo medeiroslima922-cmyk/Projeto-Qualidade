@@ -1,0 +1,9 @@
+train: ./data/train/images
+val: ./data/val/images
+nc: 5
+names:
+  - campo_texto_superior
+  - numero_medidor
+  - id_medidor
+  - tensao
+  - area_cliente
